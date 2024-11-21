@@ -2,6 +2,7 @@ import 'dart:math';
 
 class Contact {
   String name;
+  String gender;
   String email;
   double rating;
   String address;
@@ -12,6 +13,7 @@ class Contact {
 
   Contact({
     required this.name,
+    required this.gender,
     required this.email,
     required this.rating,
     required this.address,

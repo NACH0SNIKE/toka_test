@@ -58,9 +58,9 @@ class PeopleListScreen extends StatelessWidget {
         ),
         body: Padding(
           padding: const EdgeInsets.all(20.0),
-          child: Column(
-            children: [
-              GestureDetector(
+          child: ListView.builder(
+            itemBuilder: (context, index) {
+              return GestureDetector(
                 onTap: () {
                   Navigator.push(
                     context,
@@ -78,8 +78,9 @@ class PeopleListScreen extends StatelessWidget {
                   rating: 3,
                   address: 'Somewhere in Nowhere',
                 ),
-              ),
-            ],
+              );
+            },
+            itemCount: 5,
           ),
         ),
       ),
