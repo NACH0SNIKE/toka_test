@@ -4,7 +4,6 @@ class CustomTextField extends StatelessWidget {
   final String msg;
   final IconData icon;
   final bool isPassword;
-  final ValueChanged<String> onChange;
   TextEditingController controller;
 
   CustomTextField({
@@ -12,7 +11,6 @@ class CustomTextField extends StatelessWidget {
     required this.msg,
     required this.icon,
     this.isPassword = false,
-    required this.onChange,
     required this.controller,
   });
 
@@ -20,8 +18,7 @@ class CustomTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
-      onChanged: onChange,
-      maxLength: 15,
+      maxLength: 150,
       obscureText: isPassword,
       decoration: InputDecoration(
         counterText: "",

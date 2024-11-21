@@ -4,7 +4,7 @@ class PersonCard extends StatelessWidget {
   final AssetImage img;
   final String name;
   final String email;
-  final double rating;
+  final String rating;
   final String address;
 
   PersonCard({

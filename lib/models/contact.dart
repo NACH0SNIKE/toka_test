@@ -23,11 +23,57 @@ class Contact {
     required this.phone,
   });
 
-  double getRating() {
-    double rating = 0;
-    for (var i = 0; i < 10; i++) {
-      rating += Random().nextInt(11);
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'gender': gender,
+      'email': email,
+      'rating': rating,
+      'address': address,
+      'city': city,
+      'state': state,
+      'zipCode': zipCode,
+      'phone': phone,
+    };
+  }
+
+  factory Contact.fromMap(Map<String, dynamic> map) {
+    return Contact(
+      name: map['name'],
+      gender: map['gender'],
+      email: map['email'],
+      rating: map['rating'],
+      address: map['address'],
+      city: map['city'],
+      state: map['state'],
+      zipCode: map['zipCode'],
+      phone: map['phone'],
+    );
+  }
+
+  // Factory constructor to create Contact from API JSON response
+  factory Contact.fromJson(Map<String, dynamic> json) {
+    double getRating() {
+      double rating = 0;
+      // Generating 10 random numbers between 0 and 10
+      for (var i = 0; i < 10; i++) {
+        rating += Random().nextInt(11); // Generate random int between 0 and 10
+      }
+      return rating / 10; // Calculate average
     }
-    return rating;
+
+    return Contact(
+      name:
+          '${json['results'][0]['name']['first']} ${json['results'][0]['name']['last']}',
+      gender: json['results'][0]['gender'],
+      email: json['results'][0]['email'],
+      rating: getRating(), // Rating will be calculated here
+      address:
+          '${json['results'][0]['location']['street']['number']} ${json['results'][0]['location']['street']['name']}',
+      city: json['results'][0]['location']['city'],
+      state: json['results'][0]['location']['state'],
+      zipCode: json['results'][0]['location']['postcode'].toString(),
+      phone: json['results'][0]['phone'],
+    );
   }
 }

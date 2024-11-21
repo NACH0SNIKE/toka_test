@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:toka_test/components/info_with_detail.dart';
 import 'package:toka_test/components/long_button.dart';
+import 'package:toka_test/models/contact.dart';
 
-class DetailsScreen extends StatelessWidget {
+class ContactScreen extends StatelessWidget {
   static const id = 'DetailScreen';
-  const DetailsScreen({super.key});
+  Contact contact;
+  int photoNumber;
+
+  ContactScreen({
+    super.key,
+    required this.contact,
+    required this.photoNumber,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -32,46 +40,49 @@ class DetailsScreen extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 50.0,
-                    backgroundImage: AssetImage('assets/images/1.jpg'),
+                    backgroundImage:
+                        AssetImage('assets/images/${photoNumber}.jpg'),
                   ),
                   SizedBox(
                     width: 20.0,
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'John Doe',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          contact.name,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      Text(
-                        'realemail@email.com',
-                        style: TextStyle(
-                          color: Colors.lightGreenAccent[700],
-                          fontWeight: FontWeight.bold,
+                        Text(
+                          contact.email,
+                          style: TextStyle(
+                            color: Colors.lightGreenAccent[700],
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      RichText(
-                        text: TextSpan(
-                          children: [
-                            WidgetSpan(
-                              child: Icon(
-                                Icons.star,
-                                color: Colors.yellow[600],
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              WidgetSpan(
+                                child: Icon(
+                                  Icons.star,
+                                  color: Colors.yellow[600],
+                                ),
                               ),
-                            ),
-                            TextSpan(
-                              text: ' 4.9',
-                              style: TextStyle(
-                                color: Colors.grey[600],
+                              TextSpan(
+                                text: contact.rating.toStringAsFixed(1),
+                                style: TextStyle(
+                                  color: Colors.grey[600],
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -91,23 +102,23 @@ class DetailsScreen extends StatelessWidget {
               ),
               InfoWithDetail(
                 info: 'Street: ',
-                detail: 'Some street',
+                detail: contact.address,
               ),
               InfoWithDetail(
                 info: 'City: ',
-                detail: 'Saint Denis',
+                detail: contact.city,
               ),
               InfoWithDetail(
                 info: 'State: ',
-                detail: 'Lemoyne',
+                detail: contact.state,
               ),
               InfoWithDetail(
                 info: 'Zip Code: ',
-                detail: '42069',
+                detail: contact.zipCode,
               ),
               InfoWithDetail(
                 info: 'Phone Number: ',
-                detail: '(666) 420 6969',
+                detail: contact.phone,
               ),
               SizedBox(
                 height: 30.0,

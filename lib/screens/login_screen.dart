@@ -1,19 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:toka_test/components/custom_text_field.dart';
 import 'package:toka_test/components/long_button.dart';
-import 'package:toka_test/screens/people_list_screen.dart';
+import 'package:toka_test/screens/contacts_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginScreen extends StatelessWidget {
   static const id = 'LoginScreen';
-  const LoginScreen({super.key});
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  LoginScreen({super.key});
+
+  Future<void> loginWithEmail(
+      String email, String password, BuildContext context) async {
+    try {
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      print('Logged in as: ${userCredential.user?.email}');
+      Navigator.pushNamed(
+        context,
+        ContactsScreen.id,
+        arguments: {
+          'userId': userCredential.user!.uid,
+        },
+      );
+    } on FirebaseAuthException catch (e) {
+      print(e.code);
+      if (e.code == 'user-not-found') {
+        print('User not found. Creating new account...');
+        UserCredential userCredential =
+            await _auth.createUserWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+        Navigator.pushNamed(
+          context,
+          ContactsScreen.id,
+          arguments: {
+            'userId': userCredential.user!.uid,
+          },
+        );
+        print('Account created for: ${userCredential.user?.email}');
+      } else {
+        print('Login error: ${e.message}');
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final _formKey = GlobalKey<FormState>();
-    final FirebaseAuth _auth = FirebaseAuth.instance;
-    late String email;
-    late String password;
     bool showSpinner = false;
     final TextEditingController _emailController = TextEditingController();
     final TextEditingController _passwordController = TextEditingController();
@@ -45,9 +81,6 @@ class LoginScreen extends StatelessWidget {
                       msg: 'Email Address',
                       icon: Icons.account_circle,
                       controller: _emailController,
-                      onChange: (value) {
-                        password = value;
-                      },
                     ),
                     const SizedBox(
                       height: 30.0,
@@ -57,9 +90,6 @@ class LoginScreen extends StatelessWidget {
                       isPassword: true,
                       icon: Icons.account_circle,
                       controller: _passwordController,
-                      onChange: (value) {
-                        password = value;
-                      },
                     ),
                     const SizedBox(
                       height: 40.0,
@@ -71,13 +101,14 @@ class LoginScreen extends StatelessWidget {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           print('Valid email: ${_passwordController.text}');
-                          Navigator.push(
+                          /* loginWithEmail(
+                            _emailController.text,
+                            _passwordController.text,
                             context,
-                            MaterialPageRoute(
-                              builder: (context) {
-                                return const PeopleListScreen();
-                              },
-                            ),
+                          ); */
+                          Navigator.pushNamed(
+                            context,
+                            ContactsScreen.id,
                           );
                         } else {
                           print('Invalid email');

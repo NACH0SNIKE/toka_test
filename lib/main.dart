@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:toka_test/screens/details_screen.dart';
+import 'package:toka_test/screens/contact_screen.dart';
 import 'package:toka_test/screens/login_screen.dart';
-import 'package:toka_test/screens/people_list_screen.dart';
+import 'package:toka_test/screens/contacts_screen.dart';
 import 'package:toka_test/screens/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -26,9 +26,8 @@ class MainApp extends StatelessWidget {
       initialRoute: SplashScreen.id,
       routes: {
         SplashScreen.id: (context) => const SplashScreen(),
-        LoginScreen.id: (context) => const LoginScreen(),
-        PeopleListScreen.id: (context) => const PeopleListScreen(),
-        DetailsScreen.id: (context) => const DetailsScreen(),
+        LoginScreen.id: (context) => LoginScreen(),
+        ContactsScreen.id: (context) => const ContactsScreen(),
       },
     );
   }

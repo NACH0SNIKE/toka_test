@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:toka_test/screens/people_list_screen.dart';
+import 'package:toka_test/screens/contacts_screen.dart';
 
 class LongButton extends StatelessWidget {
   final String msg;
