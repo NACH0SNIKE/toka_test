@@ -18,7 +18,7 @@ class CustomTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
-      maxLength: isPassword ? 15 : 30,
+      maxLength: 15,
       obscureText: isPassword,
       decoration: InputDecoration(
         counterText: "",
