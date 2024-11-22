@@ -1,3 +1,3 @@
 # toka_test
 
-A new Flutter project.
+Flutter project for the Toka International Test.
