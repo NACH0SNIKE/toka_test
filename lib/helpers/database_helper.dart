@@ -47,7 +47,7 @@ class DatabaseHelper {
       'contacts',
       {
         'userId': userId,
-        ...contact.toMap(), // Convert contact to Map before saving
+        ...contact.toMap(),
       },
       conflictAlgorithm: ConflictAlgorithm.replace,
     );

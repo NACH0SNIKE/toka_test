@@ -32,21 +32,18 @@ class _ContactsScreenState extends State<ContactsScreen> {
     super.didChangeDependencies();
 
     if (widget.userId == null) {
-      // Ensure this only runs once
       final args =
           ModalRoute.of(context)!.settings.arguments as Map<String, String>;
-      widget.userId = args['userId']; // Safely assign userId
+      widget.userId = args['userId'];
 
       if (widget.userId != null) {
         fetchOrCreateContacts();
       } else {
-        // Handle the case where userId is null
         print('Error: userId is null');
       }
     }
   }
 
-  // Fetch contacts or create new ones
   Future<void> fetchOrCreateContacts() async {
     if (widget.userId == null) {
       print('Error: userId is null');
@@ -56,25 +53,20 @@ class _ContactsScreenState extends State<ContactsScreen> {
     final dbHelper = DatabaseHelper.instance;
 
     try {
-      // Fetch existing contacts from the database
       final existingContacts = await dbHelper.getContacts(widget.userId!);
 
-      // If contacts already exist for this user, load them
       if (existingContacts.isNotEmpty) {
         setState(() {
           widget.contacts = existingContacts;
         });
       } else {
-        // If no contacts exist, create 5 random contacts
         final newContacts =
             await Future.wait(List.generate(5, (_) => fetchRandomContact()));
 
-        // Save each contact in the database
         for (var contact in newContacts) {
           await dbHelper.saveContact(widget.userId!, contact);
         }
 
-        // Update the UI with the new contacts
         setState(() {
           widget.contacts = newContacts;
         });
@@ -84,7 +76,6 @@ class _ContactsScreenState extends State<ContactsScreen> {
     }
   }
 
-  // Fetch a random contact from the API
   Future<Contact> fetchRandomContact() async {
     final response = await http.get(Uri.parse('https://randomuser.me/api/'));
     if (response.statusCode == 200) {

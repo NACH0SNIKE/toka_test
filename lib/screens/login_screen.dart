@@ -29,7 +29,6 @@ class LoginScreen extends StatelessWidget {
         );
       }
     } on FirebaseAuthException catch (e) {
-      print('-----------------------------------------------------');
       print(e.code);
       if (e.code == 'user-not-found' || e.code == 'invalid-credential') {
         print('User not found. Creating new account...');

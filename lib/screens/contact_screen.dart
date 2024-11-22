@@ -22,9 +22,8 @@ class ContactScreen extends StatefulWidget {
 
 class _ContactScreenState extends State<ContactScreen> {
   late GoogleMapController mapController;
-  late LatLng _center =
-      LatLng(0.0, 0.0); // To store the coordinates for the location
-  Set<Marker> _markers = {}; // Set of markers to display on the map
+  late LatLng _center = LatLng(0.0, 0.0);
+  Set<Marker> _markers = {};
 
   @override
   void initState() {
@@ -34,18 +33,14 @@ class _ContactScreenState extends State<ContactScreen> {
 
   Future<void> _getCoordinates(String city) async {
     try {
-      // Using geocoding package to get coordinates based on city
       List<Location> locations = await locationFromAddress(city);
 
-      // If geocoding is successful
       if (locations.isNotEmpty) {
-        final location = locations.first; // Get the first result
+        final location = locations.first;
 
-        // Update the map with new coordinates
         setState(() {
           _center = LatLng(location.latitude, location.longitude);
 
-          // Add a marker for the location
           _markers = {
             Marker(
               markerId: MarkerId('marker_1'),
@@ -55,7 +50,6 @@ class _ContactScreenState extends State<ContactScreen> {
           };
         });
 
-        // Animate the camera to the new location
         mapController.animateCamera(
           CameraUpdate.newLatLng(_center),
         );
@@ -65,7 +59,6 @@ class _ContactScreenState extends State<ContactScreen> {
     }
   }
 
-  // Function to handle when the map is created
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
   }

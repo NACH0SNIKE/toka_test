@@ -18,15 +18,12 @@ class _SplashScreenState extends State<SplashScreen> {
     print(user);
 
     if (user != null) {
-      // User is signed in; retrieve their contacts
       final userId = user.uid;
 
       try {
         final dbHelper = DatabaseHelper.instance;
         final existingContacts = await dbHelper.getContacts(userId);
-
-        // Wait until contacts are retrieved
-        await Future.delayed(const Duration(seconds: 1)); // Optional delay
+        await Future.delayed(const Duration(seconds: 1));
 
         Navigator.pushReplacement(
           context,
@@ -38,12 +35,10 @@ class _SplashScreenState extends State<SplashScreen> {
           ),
         );
       } catch (e) {
-        // Handle any errors (e.g., database issues)
         print("Error retrieving contacts: $e");
         Navigator.pushReplacementNamed(context, LoginScreen.id);
       }
     } else {
-      // No user logged in; show splash for 2 seconds, then go to LoginScreen
       await Future.delayed(const Duration(seconds: 2));
       Navigator.pushReplacementNamed(context, LoginScreen.id);
     }

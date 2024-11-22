@@ -51,15 +51,13 @@ class Contact {
     );
   }
 
-  // Factory constructor to create Contact from API JSON response
   factory Contact.fromJson(Map<String, dynamic> json) {
     double getRating() {
       double rating = 0;
-      // Generating 10 random numbers between 0 and 10
       for (var i = 0; i < 10; i++) {
-        rating += Random().nextInt(11); // Generate random int between 0 and 10
+        rating += Random().nextInt(11);
       }
-      return rating / 10; // Calculate average
+      return rating / 10;
     }
 
     return Contact(
@@ -67,7 +65,7 @@ class Contact {
           '${json['results'][0]['name']['first']} ${json['results'][0]['name']['last']}',
       gender: json['results'][0]['gender'],
       email: json['results'][0]['email'],
-      rating: getRating(), // Rating will be calculated here
+      rating: getRating(),
       address:
           '${json['results'][0]['location']['street']['number']} ${json['results'][0]['location']['street']['name']}',
       city: json['results'][0]['location']['city'],
