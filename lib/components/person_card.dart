@@ -62,21 +62,24 @@ class PersonCard extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.location_on,
-                        color: Colors.grey[400],
-                      ),
-                      Text(
-                        address,
-                        style: TextStyle(
-                          color: Colors.grey[400],
-                          fontWeight: FontWeight.bold,
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        WidgetSpan(
+                          child: Icon(
+                            Icons.location_on,
+                            color: Colors.grey[400],
+                          ),
                         ),
-                      ),
-                    ],
-                  )
+                        TextSpan(
+                          text: address,
+                          style: TextStyle(
+                            color: Colors.grey[400],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             )

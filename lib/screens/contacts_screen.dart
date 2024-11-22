@@ -6,51 +6,81 @@ import 'package:toka_test/helpers/database_helper.dart';
 import 'package:toka_test/models/contact.dart';
 import 'package:http/http.dart' as http;
 import 'package:toka_test/screens/contact_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:toka_test/screens/login_screen.dart';
 
 class ContactsScreen extends StatefulWidget {
   static const id = 'ContactsScreen';
+  String? userId;
+  List<Contact> contacts;
 
-  const ContactsScreen({
+  ContactsScreen({
     super.key,
-  });
+    required this.userId,
+    List<Contact>? contacts,
+  }) : contacts = contacts ?? [];
 
   @override
   State<ContactsScreen> createState() => _ContactsScreenState();
 }
 
 class _ContactsScreenState extends State<ContactsScreen> {
-  final String userId = '0';
-  List<Contact> contacts = [];
+  final _auth = FirebaseAuth.instance;
 
-  /* @override
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, String>;
-    userId = args['userId']!; // Get the userId passed as argument
-    fetchOrCreateContacts();
-  } */
+
+    if (widget.userId == null) {
+      // Ensure this only runs once
+      final args =
+          ModalRoute.of(context)!.settings.arguments as Map<String, String>;
+      widget.userId = args['userId']; // Safely assign userId
+
+      if (widget.userId != null) {
+        fetchOrCreateContacts();
+      } else {
+        // Handle the case where userId is null
+        print('Error: userId is null');
+      }
+    }
+  }
 
   // Fetch contacts or create new ones
   Future<void> fetchOrCreateContacts() async {
-    final dbHelper = DatabaseHelper.instance;
-    final existingContacts = await dbHelper.getContacts(userId);
+    if (widget.userId == null) {
+      print('Error: userId is null');
+      return;
+    }
 
-    // If contacts already exist for this user, load them
-    if (existingContacts.isNotEmpty) {
-      setState(() {
-        contacts = existingContacts;
-      });
-    } else {
-      // If no contacts exist, create 5 random contacts
-      final newContacts =
-          await Future.wait(List.generate(5, (_) => fetchRandomContact()));
-      for (var contact in newContacts) {
-        await dbHelper.saveContact(userId, contact); // Save each contact
+    final dbHelper = DatabaseHelper.instance;
+
+    try {
+      // Fetch existing contacts from the database
+      final existingContacts = await dbHelper.getContacts(widget.userId!);
+
+      // If contacts already exist for this user, load them
+      if (existingContacts.isNotEmpty) {
+        setState(() {
+          widget.contacts = existingContacts;
+        });
+      } else {
+        // If no contacts exist, create 5 random contacts
+        final newContacts =
+            await Future.wait(List.generate(5, (_) => fetchRandomContact()));
+
+        // Save each contact in the database
+        for (var contact in newContacts) {
+          await dbHelper.saveContact(widget.userId!, contact);
+        }
+
+        // Update the UI with the new contacts
+        setState(() {
+          widget.contacts = newContacts;
+        });
       }
-      setState(() {
-        contacts = newContacts;
-      });
+    } catch (e) {
+      print('Error fetching or creating contacts: $e');
     }
   }
 
@@ -110,8 +140,8 @@ class _ContactsScreenState extends State<ContactsScreen> {
               onSelected: (value) async {
                 if (value == 'logout') {
                   try {
-                    //await FirebaseAuth.instance.signOut();
-                    Navigator.pop(context);
+                    FirebaseAuth.instance.signOut();
+                    Navigator.pushReplacementNamed(context, LoginScreen.id);
                   } catch (e) {
                     print("Error signing out: $e");
                   }
@@ -128,14 +158,14 @@ class _ContactsScreenState extends State<ContactsScreen> {
         ),
         body: Padding(
           padding: const EdgeInsets.all(20.0),
-          child: contacts.isEmpty
+          child: widget.contacts.isEmpty
               ? const Center(
                   child: CircularProgressIndicator(),
                 )
               : ListView.builder(
-                  itemCount: contacts.length,
+                  itemCount: widget.contacts.length,
                   itemBuilder: (context, index) {
-                    final contact = contacts[index];
+                    final contact = widget.contacts[index];
                     return GestureDetector(
                       onTap: () {
                         Navigator.push(
