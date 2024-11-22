@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:toka_test/components/info_with_detail.dart';
 import 'package:toka_test/components/long_button.dart';
 import 'package:toka_test/models/contact.dart';
 
-class ContactScreen extends StatelessWidget {
+class ContactScreen extends StatefulWidget {
   static const id = 'DetailScreen';
   Contact contact;
   int photoNumber;
@@ -13,6 +15,60 @@ class ContactScreen extends StatelessWidget {
     required this.contact,
     required this.photoNumber,
   });
+
+  @override
+  State<ContactScreen> createState() => _ContactScreenState();
+}
+
+class _ContactScreenState extends State<ContactScreen> {
+  late GoogleMapController mapController;
+  late LatLng _center =
+      LatLng(0.0, 0.0); // To store the coordinates for the location
+  Set<Marker> _markers = {}; // Set of markers to display on the map
+
+  @override
+  void initState() {
+    super.initState();
+    _getCoordinates(widget.contact.city);
+  }
+
+  Future<void> _getCoordinates(String city) async {
+    try {
+      // Using geocoding package to get coordinates based on city
+      List<Location> locations = await locationFromAddress(city);
+
+      // If geocoding is successful
+      if (locations.isNotEmpty) {
+        final location = locations.first; // Get the first result
+
+        // Update the map with new coordinates
+        setState(() {
+          _center = LatLng(location.latitude, location.longitude);
+
+          // Add a marker for the location
+          _markers = {
+            Marker(
+              markerId: MarkerId('marker_1'),
+              position: _center,
+              infoWindow: InfoWindow(title: 'Location: $city'),
+            ),
+          };
+        });
+
+        // Animate the camera to the new location
+        mapController.animateCamera(
+          CameraUpdate.newLatLng(_center),
+        );
+      }
+    } catch (e) {
+      print("Error getting coordinates: $e");
+    }
+  }
+
+  // Function to handle when the map is created
+  void _onMapCreated(GoogleMapController controller) {
+    mapController = controller;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +97,7 @@ class ContactScreen extends StatelessWidget {
                   CircleAvatar(
                     radius: 50.0,
                     backgroundImage:
-                        AssetImage('assets/images/${photoNumber}.jpg'),
+                        AssetImage('assets/images/${widget.photoNumber}.jpg'),
                   ),
                   SizedBox(
                     width: 20.0,
@@ -51,13 +107,13 @@ class ContactScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          contact.name,
+                          widget.contact.name,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         Text(
-                          contact.email,
+                          widget.contact.email,
                           style: TextStyle(
                             color: Colors.lightGreenAccent[700],
                             fontWeight: FontWeight.bold,
@@ -73,7 +129,7 @@ class ContactScreen extends StatelessWidget {
                                 ),
                               ),
                               TextSpan(
-                                text: contact.rating.toStringAsFixed(1),
+                                text: widget.contact.rating.toStringAsFixed(1),
                                 style: TextStyle(
                                   color: Colors.grey[600],
                                 ),
@@ -102,23 +158,23 @@ class ContactScreen extends StatelessWidget {
               ),
               InfoWithDetail(
                 info: 'Street: ',
-                detail: contact.address,
+                detail: widget.contact.address,
               ),
               InfoWithDetail(
                 info: 'City: ',
-                detail: contact.city,
+                detail: widget.contact.city,
               ),
               InfoWithDetail(
                 info: 'State: ',
-                detail: contact.state,
+                detail: widget.contact.state,
               ),
               InfoWithDetail(
                 info: 'Zip Code: ',
-                detail: contact.zipCode,
+                detail: widget.contact.zipCode,
               ),
               InfoWithDetail(
                 info: 'Phone Number: ',
-                detail: contact.phone,
+                detail: widget.contact.phone,
               ),
               SizedBox(
                 height: 30.0,
@@ -144,12 +200,22 @@ class ContactScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  top: 12.0,
-                  bottom: 50.0,
+              const SizedBox(
+                height: 20.0,
+              ),
+              SizedBox(
+                height: 230.0,
+                child: GoogleMap(
+                  onMapCreated: _onMapCreated,
+                  initialCameraPosition: CameraPosition(
+                    target: _center,
+                    zoom: 15.0,
+                  ),
+                  markers: _markers,
                 ),
-                child: Image.asset('assets/images/maps.png'),
+              ),
+              const SizedBox(
+                height: 40.0,
               ),
               LongButton(
                 msg: 'Contact',

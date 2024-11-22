@@ -101,6 +101,30 @@ class _ContactsScreenState extends State<ContactsScreen> {
             ),
           ),
           automaticallyImplyLeading: false,
+          actions: [
+            PopupMenuButton<String>(
+              icon: Icon(
+                Icons.more_horiz,
+                color: Colors.white,
+              ),
+              onSelected: (value) async {
+                if (value == 'logout') {
+                  try {
+                    //await FirebaseAuth.instance.signOut();
+                    Navigator.pop(context);
+                  } catch (e) {
+                    print("Error signing out: $e");
+                  }
+                }
+              },
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: 'logout',
+                  child: Text('Log Out'),
+                ),
+              ],
+            ),
+          ],
         ),
         body: Padding(
           padding: const EdgeInsets.all(20.0),
